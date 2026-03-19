@@ -1,6 +1,7 @@
 import type { ExploreMarket, MarketsResponse } from "@repo/shared-types";
 import type { VenueWorkerHandle } from "../workers/venue-worker-handle.ts";
 import { mergeMatchingMarkets } from "./matcher.ts";
+import { PriceHistoryStore } from "./price-history.ts";
 
 const REFRESH_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 
@@ -14,6 +15,7 @@ export class MarketCache {
   private lastUpdated = 0;
   private timer: ReturnType<typeof setInterval> | null = null;
   private refreshPromise: Promise<void> | null = null;
+  readonly priceHistory = new PriceHistoryStore();
 
   private polyHandle: VenueWorkerHandle;
   private kalshiHandle: VenueWorkerHandle;
@@ -182,6 +184,10 @@ export class MarketCache {
     this.sorted.set("newest", [...this.markets].reverse());
 
     this.lastUpdated = Date.now();
+
+    // Record price snapshot for history
+    this.priceHistory.recordAll(this.markets);
+
     console.log(
       `[market-cache] Cached ${this.markets.length} markets ` +
         `(${this.polymarketCount} Polymarket, ${this.kalshiCount} Kalshi, ` +

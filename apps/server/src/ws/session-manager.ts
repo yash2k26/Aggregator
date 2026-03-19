@@ -108,6 +108,7 @@ export class MarketSessionManager {
       id: marketId,
       question: market.question,
       outcomes: market.outcomes,
+      imageUrl: market.imageUrl ?? market.venues.find((v) => v.imageUrl)?.imageUrl ?? null,
     };
 
     const session: MarketSession = {

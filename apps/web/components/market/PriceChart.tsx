@@ -34,6 +34,11 @@ function formatElapsed(ms: number): string {
 }
 
 export function PriceChart({ history, animationKey = "default" }: PriceChartProps) {
+  const axisColor = "var(--color-text-muted)";
+  const tooltipBg = "var(--color-surface-2)";
+  const tooltipBorder = "var(--color-border)";
+  const tooltipText = "var(--color-text-primary)";
+
   const chartData = useMemo(
     () =>
       history.map((point) => ({
@@ -48,15 +53,16 @@ export function PriceChart({ history, animationKey = "default" }: PriceChartProp
     if (history.length < 2) return "";
     return formatElapsed(history[history.length - 1]!.time - history[0]!.time);
   }, [history]);
+  const shouldAnimate = history.length <= 4;
 
   if (history.length < 2) {
     return (
-      <div className="rounded-xl border border-border bg-surface-2 overflow-hidden shadow-sm">
+      <div className="depth-card rounded-xl overflow-hidden">
         <div className="px-5 py-3 border-b border-border flex items-center justify-between">
-          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+          <h2 className="text-[13px] font-semibold uppercase tracking-wider text-text-muted">
             Price History
           </h2>
-          <div className="flex items-center gap-3 text-[10px]">
+          <div className="flex items-center gap-3 text-[13px]">
             <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-bid" /> Yes</span>
             <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-ask" /> No</span>
           </div>
@@ -69,12 +75,12 @@ export function PriceChart({ history, animationKey = "default" }: PriceChartProp
   }
 
   return (
-    <div className="rounded-xl border border-border bg-surface-2 overflow-hidden shadow-sm">
+    <div className="depth-card rounded-xl overflow-hidden">
       <div className="px-5 py-3 border-b border-border flex items-center justify-between">
-        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+        <h2 className="text-[13px] font-semibold uppercase tracking-wider text-text-muted">
           Price History
         </h2>
-        <div className="flex items-center gap-3 text-[10px] text-text-muted">
+        <div className="flex items-center gap-3 text-[13px] text-text-muted">
           <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-bid" /> Yes</span>
           <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-ask" /> No</span>
         </div>
@@ -83,7 +89,7 @@ export function PriceChart({ history, animationKey = "default" }: PriceChartProp
       <div className="h-36 px-2 py-2">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart key={animationKey} data={chartData} margin={{ top: 8, right: 10, bottom: 8, left: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.14)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
             <XAxis
               dataKey="time"
               type="number"
@@ -94,7 +100,7 @@ export function PriceChart({ history, animationKey = "default" }: PriceChartProp
             />
             <YAxis
               tickFormatter={formatCents}
-              tick={{ fill: "rgba(148,163,184,0.8)", fontSize: 10 }}
+              tick={{ fill: axisColor, fontSize: 10 }}
               tickLine={false}
               axisLine={false}
               width={40}
@@ -103,10 +109,10 @@ export function PriceChart({ history, animationKey = "default" }: PriceChartProp
               labelFormatter={() => ""}
               formatter={(value: number, name: string) => [formatCents(value), name.toUpperCase()]}
               contentStyle={{
-                background: "rgba(10, 14, 23, 0.95)",
-                border: "1px solid rgba(148,163,184,0.2)",
+                background: tooltipBg,
+                border: `1px solid ${tooltipBorder}`,
                 borderRadius: 10,
-                color: "white",
+                color: tooltipText,
               }}
             />
             <Area
@@ -116,9 +122,9 @@ export function PriceChart({ history, animationKey = "default" }: PriceChartProp
               strokeWidth={2}
               fill={NO_FILL}
               fillOpacity={1}
-              isAnimationActive
-              animationDuration={1200}
-              animationEasing="ease-in-out"
+              isAnimationActive={shouldAnimate}
+              animationDuration={180}
+              animationEasing="linear"
             />
             <Area
               type="monotone"
@@ -127,16 +133,15 @@ export function PriceChart({ history, animationKey = "default" }: PriceChartProp
               strokeWidth={2}
               fill={YES_FILL}
               fillOpacity={1}
-              isAnimationActive
-              animationBegin={260}
-              animationDuration={1200}
-              animationEasing="ease-in-out"
+              isAnimationActive={shouldAnimate}
+              animationDuration={180}
+              animationEasing="linear"
             />
           </AreaChart>
         </ResponsiveContainer>
       </div>
 
-      <div className="px-5 pb-3 text-[10px] text-text-muted">{elapsedLabel}</div>
+      <div className="px-5 pb-3 text-[11px] text-text-muted">{elapsedLabel}</div>
     </div>
   );
 }

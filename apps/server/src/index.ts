@@ -53,6 +53,12 @@ async function main(): Promise<void> {
     res.json(market);
   });
 
+  app.get("/api/markets/:id/history", (req, res) => {
+    const hours = Math.min(48, Math.max(1, parseInt(String(req.query["hours"] ?? "24"), 10)));
+    const points = marketCache.priceHistory.get(req.params["id"]!, hours);
+    res.json({ points });
+  });
+
   const httpServer = createServer(app);
 
   httpServer.on("error", (err: NodeJS.ErrnoException) => {

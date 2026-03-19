@@ -30,6 +30,12 @@ function formatCents(value: number): string {
 }
 
 export function DepthChart({ book, animationKey = "default" }: DepthChartProps) {
+  const axisColor = "var(--color-text-muted)";
+  const tooltipBg = "var(--color-surface-2)";
+  const tooltipBorder = "var(--color-border)";
+  const tooltipText = "var(--color-text-primary)";
+  const refLineColor = "var(--color-border)";
+
   const data = useMemo(() => {
     if (!book || book.mid === null) return null;
 
@@ -58,12 +64,13 @@ export function DepthChart({ book, animationKey = "default" }: DepthChartProps) 
     const maxDepth = Math.max(...points.map((p) => Math.max(p.bidDepth, p.askDepth)), 1);
     return { points, maxDepth, mid: book.mid };
   }, [book]);
+  const shouldAnimate = false;
 
   if (!data) {
     return (
-      <div className="rounded-xl border border-border bg-surface-2 overflow-hidden shadow-sm">
+      <div className="depth-card rounded-xl overflow-hidden">
         <div className="px-5 py-3 border-b border-border">
-          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+          <h2 className="text-[13px] font-semibold uppercase tracking-wider text-text-muted">
             Depth Chart
           </h2>
         </div>
@@ -75,9 +82,9 @@ export function DepthChart({ book, animationKey = "default" }: DepthChartProps) 
   }
 
   return (
-    <div className="rounded-xl border border-border bg-surface-2 overflow-hidden shadow-sm">
+    <div className="depth-card rounded-xl overflow-hidden">
       <div className="px-5 py-3 border-b border-border">
-        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+        <h2 className="text-[13px] font-semibold uppercase tracking-wider text-text-muted">
           Depth Chart
         </h2>
       </div>
@@ -85,19 +92,19 @@ export function DepthChart({ book, animationKey = "default" }: DepthChartProps) 
       <div className="h-40 px-2 py-2">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart key={animationKey} data={data.points} margin={{ top: 8, right: 12, bottom: 8, left: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.14)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
             <XAxis
               dataKey="price"
               type="number"
               domain={["dataMin", "dataMax"]}
               tickFormatter={formatCents}
-              tick={{ fill: "rgba(148,163,184,0.8)", fontSize: 10 }}
+              tick={{ fill: axisColor, fontSize: 10 }}
               tickLine={false}
               axisLine={false}
             />
             <YAxis
               width={40}
-              tick={{ fill: "rgba(148,163,184,0.8)", fontSize: 10 }}
+              tick={{ fill: axisColor, fontSize: 10 }}
               tickLine={false}
               axisLine={false}
             />
@@ -105,22 +112,22 @@ export function DepthChart({ book, animationKey = "default" }: DepthChartProps) 
               labelFormatter={(value: number) => `Price ${formatCents(value)}`}
               formatter={(value: number, name: string) => [Number(value).toFixed(2), name === "bidDepth" ? "Bid depth" : "Ask depth"]}
               contentStyle={{
-                background: "rgba(10, 14, 23, 0.95)",
-                border: "1px solid rgba(148,163,184,0.2)",
+                background: tooltipBg,
+                border: `1px solid ${tooltipBorder}`,
                 borderRadius: 10,
-                color: "white",
+                color: tooltipText,
               }}
             />
             <Legend
               verticalAlign="top"
               height={24}
-              wrapperStyle={{ fontSize: 10, color: "rgba(148,163,184,0.9)" }}
+              wrapperStyle={{ fontSize: 10, color: axisColor }}
             />
             <ReferenceLine
               x={data.mid}
-              stroke="rgba(255,255,255,0.25)"
+              stroke={refLineColor}
               strokeDasharray="4 4"
-              label={{ value: "Mid", fill: "rgba(148,163,184,0.85)", fontSize: 10, position: "insideTopRight" }}
+              label={{ value: "Mid", fill: axisColor, fontSize: 10, position: "insideTopRight" }}
             />
             <Area
               type="stepAfter"
@@ -128,9 +135,7 @@ export function DepthChart({ book, animationKey = "default" }: DepthChartProps) 
               name="Bid"
               stroke="#22c55e"
               fill="rgba(34, 197, 94, 0.18)"
-              isAnimationActive
-              animationDuration={1100}
-              animationEasing="ease-in-out"
+              isAnimationActive={shouldAnimate}
             />
             <Area
               type="stepAfter"
@@ -138,10 +143,7 @@ export function DepthChart({ book, animationKey = "default" }: DepthChartProps) 
               name="Ask"
               stroke="#ef4444"
               fill="rgba(239, 68, 68, 0.18)"
-              isAnimationActive
-              animationBegin={220}
-              animationDuration={1100}
-              animationEasing="ease-in-out"
+              isAnimationActive={shouldAnimate}
             />
           </ComposedChart>
         </ResponsiveContainer>

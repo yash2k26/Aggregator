@@ -13,14 +13,17 @@ import { PriceChart } from "../../../components/market/PriceChart";
 
 function HeaderSkeleton() {
   return (
-    <div className="rounded-xl bg-surface-2 border border-border p-6 animate-pulse">
-      <div className="space-y-3">
-        <div className="h-6 bg-surface-3 rounded w-3/4" />
-        <div className="flex gap-8">
-          <div className="h-4 bg-surface-3 rounded w-20" />
-          <div className="h-4 bg-surface-3 rounded w-20" />
-          <div className="h-4 bg-surface-3 rounded w-20" />
-          <div className="h-4 bg-surface-3 rounded w-20" />
+    <div className="market-depth rounded-xl p-5 animate-pulse">
+      <div className="flex items-start gap-3.5">
+        <div className="h-11 w-11 rounded-xl bg-surface-3 shrink-0" />
+        <div className="space-y-2 flex-1">
+          <div className="h-5 bg-surface-3 rounded w-3/4" />
+          <div className="flex gap-2">
+            <div className="h-7 bg-surface-3 rounded-lg w-20" />
+            <div className="h-7 bg-surface-3 rounded-lg w-20" />
+            <div className="h-7 bg-surface-3 rounded-lg w-20" />
+            <div className="h-7 bg-surface-3 rounded-lg w-20" />
+          </div>
         </div>
       </div>
     </div>
@@ -29,7 +32,7 @@ function HeaderSkeleton() {
 
 function OrderBookSkeleton() {
   return (
-    <div className="rounded-xl border border-border bg-surface-2 overflow-hidden animate-pulse">
+    <div className="depth-card rounded-xl overflow-hidden animate-pulse">
       <div className="px-5 py-3 border-b border-border flex justify-between">
         <div className="h-4 bg-surface-3 rounded w-20" />
         <div className="flex gap-1">
@@ -52,7 +55,7 @@ function OrderBookSkeleton() {
 
 function QuotePanelSkeleton() {
   return (
-    <div className="rounded-xl border border-border bg-surface-2 overflow-hidden animate-pulse">
+    <div className="depth-card rounded-xl overflow-hidden animate-pulse">
       <div className="px-5 py-3 border-b border-border">
         <div className="h-4 bg-surface-3 rounded w-16" />
       </div>
@@ -96,11 +99,11 @@ export default function MarketPage({
   const isLoading = !state.market;
 
   return (
-    <main className="min-h-screen p-8 max-w-[1400px] mx-auto space-y-6">
+    <main className="page-shell min-h-screen space-y-4">
       {isLoading ? (
         <HeaderSkeleton />
       ) : (
-        <div className="rounded-xl bg-surface-2 border border-border p-6">
+        <div className="market-depth rounded-xl p-5">
           <div className="flex items-start justify-between gap-4">
             <MarketHeader market={state.market} book={state.aggregated} />
             <VenueStatus health={state.health} wsStatus={status} />
@@ -108,7 +111,7 @@ export default function MarketPage({
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 space-y-4">
           {isLoading ? (
             <OrderBookSkeleton />

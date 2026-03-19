@@ -107,17 +107,17 @@ export function OrderBook({ aggregated, venues }: OrderBookProps) {
   }, [displayAsks, displayBids]);
 
   return (
-    <div className="rounded-xl border border-border bg-surface-2 overflow-hidden shadow-sm">
+    <div className="depth-card rounded-xl overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2 border-b border-border">
-        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+        <h2 className="text-[13px] font-semibold uppercase tracking-wider text-text-muted">
           Order Book
         </h2>
-        <div className="flex gap-1">
+        <div className="depth-segment flex gap-1 rounded-xl p-1">
           {(["combined", "polymarket", "kalshi"] as const).map((mode) => (
             <button
               key={mode}
               onClick={() => setViewMode(mode)}
-              className={`px-2 py-0.5 text-[11px] font-medium rounded-md transition-colors ${
+              className={`px-2.5 py-1 text-[13px] font-medium rounded-lg transition-colors ${
                 viewMode === mode
                   ? "bg-surface-3 text-accent"
                   : "text-text-muted hover:text-text-secondary"
@@ -148,14 +148,14 @@ export function OrderBook({ aggregated, venues }: OrderBookProps) {
                   className="absolute inset-y-[1px] right-1 rounded-sm bg-rose-500/18"
                   style={{ width: `${row.barPct}%` }}
                 />
-                <span className="relative z-10 text-rose-300">{formatPrice(row.price)}</span>
-                <span className="relative z-10 text-right text-slate-100">{formatSize(row.size)}</span>
-                <span className="relative z-10 text-right text-slate-100">{formatSize(row.total)}</span>
+                <span className="relative z-10 text-ask">{formatPrice(row.price)}</span>
+                <span className="relative z-10 text-right text-text-primary">{formatSize(row.size)}</span>
+                <span className="relative z-10 text-right text-text-primary">{formatSize(row.total)}</span>
               </div>
             ))}
           </div>
 
-          <div className="my-1.5 border-t border-b border-border px-2 py-1.5 text-center text-[13px] font-semibold tabular-nums text-emerald-300">
+          <div className="my-1.5 border-t border-b border-border px-2 py-1.5 text-center text-[13px] font-semibold tabular-nums text-bid">
             {formatPrice(aggregated.mid)}
           </div>
 
@@ -166,14 +166,14 @@ export function OrderBook({ aggregated, venues }: OrderBookProps) {
                   className="absolute inset-y-[1px] left-1 rounded-sm bg-emerald-500/20"
                   style={{ width: `${row.barPct}%` }}
                 />
-                <span className="relative z-10 text-emerald-300">{formatPrice(row.price)}</span>
-                <span className="relative z-10 text-right text-slate-100">{formatSize(row.size)}</span>
-                <span className="relative z-10 text-right text-slate-100">{formatSize(row.total)}</span>
+                <span className="relative z-10 text-bid">{formatPrice(row.price)}</span>
+                <span className="relative z-10 text-right text-text-primary">{formatSize(row.size)}</span>
+                <span className="relative z-10 text-right text-text-primary">{formatSize(row.total)}</span>
               </div>
             ))}
           </div>
 
-          <div className="px-2 pt-1.5 text-[9px] text-text-muted border-t border-border">
+          <div className="px-2 pt-1.5 text-[11px] text-text-muted border-t border-border">
             Max cumulative depth: {formatSize(maxTotal)}
           </div>
         </div>

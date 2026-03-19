@@ -2,6 +2,8 @@ export interface MarketInfo {
   id: string;
   question: string;
   outcomes: [string, string];
+  /** Optional image URL from venue metadata */
+  imageUrl?: string | null;
 }
 
 /** A market card for the explore page */

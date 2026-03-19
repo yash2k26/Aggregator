@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: "PredictPro - Prediction Market Aggregator",
   description: "Aggregated order book across Polymarket and Kalshi",
   openGraph: {
-    images: ["/og-image.jpg"],
+    images: ["/aggregator-logo.png"],
   },
 };
 

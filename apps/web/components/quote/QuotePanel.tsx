@@ -38,32 +38,32 @@ export function QuotePanel({ onRequestQuote, quote }: QuotePanelProps) {
     : 0;
 
   return (
-    <div className="rounded-xl border border-border bg-surface-2 overflow-hidden shadow-md">
-      <div className="px-5 py-3 border-b border-border">
-        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+    <div className="depth-card rounded-xl overflow-hidden">
+      <div className="px-4 py-2.5 border-b border-border">
+        <h2 className="text-[13px] font-semibold uppercase tracking-wider text-text-muted">
           Get Quote
         </h2>
       </div>
 
-      <div className="p-5 space-y-5">
+      <div className="p-4 space-y-4">
         {/* Side toggle */}
-        <div className="flex gap-2">
+        <div className="depth-segment flex gap-2 rounded-xl p-1">
           <button
             onClick={() => setSide("yes")}
-            className={`flex-1 py-3 text-sm font-semibold rounded-xl transition-colors ${
+            className={`flex-1 h-9 text-[13px] font-semibold rounded-xl transition-colors ${
               side === "yes"
                 ? "bg-bid/15 text-bid border-2 border-bid"
-                : "bg-surface-3 text-text-secondary border-2 border-transparent hover:text-text-primary"
+                : "bg-transparent text-text-secondary border-2 border-transparent hover:text-text-primary"
             }`}
           >
             Buy Yes
           </button>
           <button
             onClick={() => setSide("no")}
-            className={`flex-1 py-3 text-sm font-semibold rounded-xl transition-colors ${
+            className={`flex-1 h-9 text-[13px] font-semibold rounded-xl transition-colors ${
               side === "no"
                 ? "bg-ask/15 text-ask border-2 border-ask"
-                : "bg-surface-3 text-text-secondary border-2 border-transparent hover:text-text-primary"
+                : "bg-transparent text-text-secondary border-2 border-transparent hover:text-text-primary"
             }`}
           >
             Buy No
@@ -72,11 +72,11 @@ export function QuotePanel({ onRequestQuote, quote }: QuotePanelProps) {
 
         {/* Amount input */}
         <div>
-          <label className="block text-[11px] uppercase tracking-wider font-semibold text-text-muted mb-2">
+          <label className="block text-[11px] uppercase tracking-wider font-semibold text-text-muted mb-1.5">
             Amount to spend
           </label>
           <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted font-medium">
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-[13px] font-medium">
               $
             </span>
             <input
@@ -86,7 +86,7 @@ export function QuotePanel({ onRequestQuote, quote }: QuotePanelProps) {
               placeholder="100.00"
               min="0"
               step="10"
-              className="w-full pl-8 pr-4 py-3 bg-surface-3 border border-border rounded-xl text-sm font-medium text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition-colors"
+              className="w-full h-9 pl-7 pr-3.5 bg-surface-3 border border-border rounded-xl text-[13px] font-medium text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition-colors"
             />
           </div>
 
@@ -96,7 +96,7 @@ export function QuotePanel({ onRequestQuote, quote }: QuotePanelProps) {
               <button
                 key={preset}
                 onClick={() => setAmount(String(preset))}
-                className="flex-1 py-2 text-xs font-semibold rounded-lg bg-surface-3 text-text-secondary hover:text-text-primary hover:border-border border border-transparent transition-colors"
+                className="depth-segment flex-1 h-8 text-[13px] font-semibold rounded-xl text-text-secondary hover:text-text-primary transition-colors"
               >
                 ${preset >= 1000 ? `${preset / 1000}k` : preset}
               </button>
@@ -105,23 +105,23 @@ export function QuotePanel({ onRequestQuote, quote }: QuotePanelProps) {
         </div>
 
         {/* Quote result — always visible */}
-        <div className="space-y-4 pt-4 border-t border-border">
+        <div className="space-y-3 pt-3 border-t border-border">
           {/* Primary stats */}
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div className="p-3 rounded-lg bg-surface-3">
-              <div className="text-[10px] uppercase tracking-wider font-semibold text-text-muted mb-0.5">Shares</div>
+          <div className="grid grid-cols-2 gap-2.5 text-[13px]">
+            <div className="depth-segment p-2.5 rounded-xl">
+              <div className="text-[11px] uppercase tracking-wider font-semibold text-text-muted mb-0.5">Shares</div>
               <div className="font-semibold">{hasQuote ? formatSize(quote.totalShares) : "—"}</div>
             </div>
-            <div className="p-3 rounded-lg bg-surface-3">
-              <div className="text-[10px] uppercase tracking-wider font-semibold text-text-muted mb-0.5">Avg Price</div>
+            <div className="depth-segment p-2.5 rounded-xl">
+              <div className="text-[11px] uppercase tracking-wider font-semibold text-text-muted mb-0.5">Avg Price</div>
               <div className="font-semibold">{hasQuote ? formatPrice(quote.avgPrice) : "—"}</div>
             </div>
-            <div className="p-3 rounded-lg bg-surface-3">
-              <div className="text-[10px] uppercase tracking-wider font-semibold text-text-muted mb-0.5">Total Cost</div>
+            <div className="depth-segment p-2.5 rounded-xl">
+              <div className="text-[11px] uppercase tracking-wider font-semibold text-text-muted mb-0.5">Total Cost</div>
               <div className="font-semibold">{hasQuote ? formatDollars(quote.totalCost) : "—"}</div>
             </div>
-            <div className="p-3 rounded-lg bg-surface-3">
-              <div className="text-[10px] uppercase tracking-wider font-semibold text-text-muted mb-0.5">Slippage</div>
+            <div className="depth-segment p-2.5 rounded-xl">
+              <div className="text-[11px] uppercase tracking-wider font-semibold text-text-muted mb-0.5">Slippage</div>
               <div className={`font-semibold ${hasQuote && quote.slippage > 0.005 ? "text-ask" : ""}`}>
                 {hasQuote ? `${(quote.slippage * 100).toFixed(2)}¢` : "—"}
               </div>
@@ -129,7 +129,7 @@ export function QuotePanel({ onRequestQuote, quote }: QuotePanelProps) {
           </div>
 
           {/* Return & impact — always visible */}
-          <div className="p-4 rounded-xl bg-surface border border-border text-sm space-y-3">
+          <div className="depth-card p-3.5 rounded-xl text-[13px] space-y-2.5">
             <div className="flex justify-between">
               <span className="text-text-muted">Potential Return</span>
               {potentialReturn !== null && roi !== null ? (
@@ -160,7 +160,7 @@ export function QuotePanel({ onRequestQuote, quote }: QuotePanelProps) {
 
           {/* Unfilled warning */}
           {hasQuote && quote.unfilled > 0 && (
-            <div className="text-xs text-ask bg-ask-muted px-3 py-2 rounded-xl">
+            <div className="text-[13px] text-ask bg-ask-muted px-3 py-2 rounded-xl">
               Insufficient liquidity: {formatDollars(quote.unfilled)} unfilled
             </div>
           )}
