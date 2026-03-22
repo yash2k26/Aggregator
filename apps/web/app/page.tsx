@@ -1,9 +1,9 @@
-﻿"use client";
+"use client";
 /* eslint-disable @next/next/no-img-element */
 
-import { useState, useEffect, useCallback, useMemo, useRef, Suspense } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef, Suspense, memo } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import type { ExploreMarket, MarketsResponse, ServerMessage } from "@repo/shared-types";
 import { useWebSocket } from "../hooks/useWebSocket";
 import { SECTION_LABEL } from "../lib/market-sections";
@@ -49,16 +49,19 @@ function MarketAvatar({ market }: { market: ExploreMarket }) {
 
   if (imageUrl) {
     return (
-      <img
-        src={imageUrl}
-        alt={market.question}
-        className="h-12 w-12 rounded-xl object-cover border border-white/15 shadow-sm"
-      />
+      <div className="relative h-11 w-11 shrink-0">
+        <img
+          src={imageUrl}
+          alt={market.question}
+          className="h-full w-full rounded-xl object-cover border border-white/10"
+        />
+        <div className="absolute inset-0 rounded-xl shadow-inner pointer-events-none" />
+      </div>
     );
   }
 
   return (
-    <div className="h-12 w-12 rounded-xl border border-slate-500/30 bg-gradient-to-br from-slate-700/80 to-slate-900/80 flex items-center justify-center text-sm font-semibold text-slate-100 shadow-sm">
+    <div className="h-11 w-11 rounded-xl border border-white/5 bg-surface-3 flex items-center justify-center text-xs font-bold text-text-muted shrink-0 shadow-sm">
       {fallbackLetter}
     </div>
   );
@@ -68,8 +71,8 @@ function VenueBadge({ venue }: { venue: "polymarket" | "kalshi" }) {
   return (
     <span
       className={`inline-block px-1.5 py-0.5 text-[10px] font-medium rounded ${venue === "polymarket"
-          ? "bg-slate-600/30 text-slate-200 border border-slate-500/30"
-          : "bg-zinc-700/35 text-zinc-200 border border-zinc-500/30"
+        ? "bg-slate-600/30 text-slate-200 border border-slate-500/30"
+        : "bg-zinc-700/35 text-zinc-200 border border-zinc-500/30"
         }`}
     >
       {venue === "polymarket" ? "Poly" : "Kalshi"}
@@ -77,47 +80,45 @@ function VenueBadge({ venue }: { venue: "polymarket" | "kalshi" }) {
   );
 }
 
-function OutcomeRow({
+function OutcomeButton({
   label,
   pctText,
-  emphasis,
+  color,
 }: {
   label: string;
   pctText: string;
-  emphasis: "yes" | "no" | "neutral";
+  color: "emerald" | "rose" | "neutral";
 }) {
-  const isYes = label.toLowerCase().includes("yes") || emphasis === "yes";
-  const isNo = label.toLowerCase().includes("no") || emphasis === "no";
-
-  const colorClass = isYes
-    ? "text-emerald-400"
-    : isNo
-      ? "text-rose-400"
-      : "text-text-primary";
-
-  const btnClass = isYes
-    ? "bg-emerald-500/15 border-emerald-500/25 text-emerald-500 hover:bg-emerald-500/25 hover:border-emerald-500/40"
-    : isNo
-      ? "bg-rose-500/15 border-rose-500/25 text-rose-500 hover:bg-rose-500/25 hover:border-rose-500/40"
-      : "bg-surface-3 border-border text-text-secondary hover:bg-surface-hover";
+  const isEmerald = color === "emerald";
+  const isRose = color === "rose";
 
   return (
-    <div className="flex items-center justify-between py-2 group/row transition-colors duration-200">
-      <div className="flex items-center gap-3">
-        <div className={`w-1.5 h-1.5 rounded-full ${isYes ? "bg-emerald-500" : isNo ? "bg-rose-500" : "bg-text-muted"}`} />
-        <span className="text-[13px] text-text-secondary font-medium truncate max-w-[140px]">{label}</span>
+    <div className={`flex flex-col gap-1 flex-1 p-2.5 rounded-xl border transition-all duration-200 group/btn ${
+      isEmerald 
+        ? "bg-emerald-500/5 border-emerald-500/10 hover:border-emerald-500/30" 
+        : isRose 
+          ? "bg-rose-500/5 border-rose-500/10 hover:border-rose-500/30" 
+          : "bg-surface-3 border-border hover:border-text-muted"
+    }`}>
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-[9px] font-black uppercase tracking-[0.1em] text-text-muted">{label}</span>
+        <div className={`w-1.5 h-1.5 rounded-full ${isEmerald ? "bg-emerald-500 shadow-[0_0_4px_var(--color-bid)]" : isRose ? "bg-rose-500 shadow-[0_0_4px_var(--color-ask)]" : "bg-text-muted"}`} />
       </div>
-      <div className="flex items-center gap-4">
-        <span className={`text-lg leading-none font-bold tabular-nums ${colorClass}`}>{pctText}</span>
-        <button className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg border transition-all duration-200 active:scale-95 ${btnClass}`}>
-          {isYes ? "Buy Yes" : isNo ? "Buy No" : "Bet"}
-        </button>
+      <div className="flex items-end justify-between">
+        <span className={`text-lg font-black tabular-nums leading-none ${isEmerald ? "text-emerald-400" : isRose ? "text-rose-400" : "text-text-primary"}`}>
+          {pctText}
+        </span>
+        <div className={`text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-md border ${
+          isEmerald ? "border-emerald-500/20 text-emerald-500" : isRose ? "border-rose-500/20 text-rose-500" : "border-border text-text-muted"
+        }`}>
+          Trade
+        </div>
       </div>
     </div>
   );
 }
 
-function MarketCard({ market }: { market: ExploreMarket }) {
+const MarketCard = memo(function MarketCard({ market }: { market: ExploreMarket }) {
   const yesValue = market.yesPrice;
   const noValue = yesValue === null ? null : 1 - yesValue;
   const outcomes = market.outcomes || ["Yes", "No"];
@@ -129,65 +130,77 @@ function MarketCard({ market }: { market: ExploreMarket }) {
   return (
     <Link
       href={`/market/${encodeURIComponent(market.id)}`}
-      className="market-depth depth-card-hover group relative block overflow-hidden rounded-[24px] p-5"
+      className="depth-card depth-card-hover group relative block overflow-hidden rounded-[24px] p-0"
     >
-      <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-border to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-      <div className="relative z-10 flex flex-col h-full">
-        <div className="mb-4 flex items-start justify-between gap-3">
-          <div className="flex items-start gap-4 flex-1 min-w-0">
+      <div className="flex flex-col h-full">
+        {/* Header / Meta */}
+        <div className="p-5 pb-4">
+          <div className="flex items-center justify-between mb-3.5">
             <MarketAvatar market={market} />
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest bg-surface-3 text-text-muted rounded-md border border-border">
-                  {market.category || "General"}
-                </span>
-                <div className="flex gap-1">
-                  {market.venues.map((v) => (
-                    <VenueBadge key={v.venue} venue={v.venue} />
-                  ))}
-                </div>
+            <div className="flex flex-col items-end gap-1">
+              <span className="text-[10px] font-black uppercase tracking-[0.15em] text-text-muted/80">
+                {market.category || "General"}
+              </span>
+              <div className="flex gap-1.5">
+                {market.venues.map((v) => (
+                  <span key={v.venue} className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase border ${
+                    v.venue === 'polymarket' ? 'border-polymarket/30 text-polymarket' : 'border-kalshi/30 text-kalshi'
+                  }`}>
+                    {v.venue === 'polymarket' ? 'Poly' : 'Kalshi'}
+                  </span>
+                ))}
               </div>
-              <h3 className="line-clamp-2 text-lg leading-[1.3] font-bold text-text-primary transition-colors">
-                {market.question}
-              </h3>
             </div>
           </div>
+          <h3 className="line-clamp-2 text-[17px] leading-[1.35] font-extrabold text-text-primary tracking-tight group-hover:text-accent transition-colors">
+            {market.question}
+          </h3>
         </div>
 
-        <div className="mt-auto space-y-1 divide-y divide-border">
-          <OutcomeRow
+        {/* Trade Bar (Outcome Buttons) */}
+        <div className="px-5 mb-5 flex gap-2.5">
+          <OutcomeButton
             label={yesLabel}
             pctText={yesPct}
-            emphasis={yesValue !== null && yesValue >= 0.6 ? "yes" : "neutral"}
+            color={yesValue !== null && noValue !== null && yesValue >= noValue ? "emerald" : "neutral"}
           />
-          <OutcomeRow
+          <OutcomeButton
             label={noLabel}
             pctText={noPct}
-            emphasis={noValue !== null && noValue >= 0.6 ? "no" : "neutral"}
+            color={noValue !== null && yesValue !== null && noValue > yesValue ? "emerald" : "neutral"}
           />
         </div>
 
-        <div className="mt-5 flex items-center justify-between pt-4 border-t border-border">
-          <div className="flex items-center gap-4">
-            <div className="flex flex-col">
-              <span className="text-[10px] uppercase tracking-wider text-text-muted font-bold">Volume</span>
-              <span className="text-xs text-text-secondary font-semibold">{formatNum(market.volume24h)}</span>
+        {/* Footer Bar */}
+        <div className="mt-auto px-5 py-3.5 bg-white/[0.02] border-t border-white/[0.03] flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <svg className="w-2.5 h-2.5 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor font-bold">
+                <path strokeWidth="3" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <div className="flex flex-col">
+                <span className="text-[11px] text-text-secondary font-bold tabular-nums leading-none mb-0.5">{formatNum(market.volume24h)}</span>
+                <span className="text-[8px] uppercase font-bold text-text-muted tracking-wide">Vol</span>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-[10px] uppercase tracking-wider text-text-muted font-bold">Liquidity</span>
-              <span className="text-xs text-text-secondary font-semibold">{formatNum(market.liquidity)}</span>
+            <div className="flex items-center gap-2">
+              <svg className="w-2.5 h-2.5 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor font-bold">
+                <path strokeWidth="3" d="M3 6h18M3 12h18M3 18h12" />
+              </svg>
+              <div className="flex flex-col">
+                <span className="text-[11px] text-text-secondary font-bold tabular-nums leading-none mb-0.5">{formatNum(market.liquidity)}</span>
+                <span className="text-[8px] uppercase font-bold text-text-muted tracking-wide">Liq</span>
+              </div>
             </div>
           </div>
-          <div className="h-8 w-8 rounded-full bg-surface-3 flex items-center justify-center border border-border group-hover:bg-accent/10 group-hover:border-accent/30 transition-all">
-            <svg viewBox="0 0 24 24" className="w-4 h-4 text-text-muted group-hover:text-accent transform transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
+          <div className="text-[8px] font-black uppercase text-accent tracking-tighter bg-accent/5 px-2 py-1 rounded-lg border border-accent/20 opacity-0 group-hover:opacity-100 transition-opacity">
+            Live Feed
           </div>
         </div>
       </div>
     </Link>
   );
-}
+});
 
 function MarketCardSkeleton() {
   return (
@@ -211,7 +224,7 @@ function MarketCardSkeleton() {
   );
 }
 
-function TrendingCarousel({
+const TrendingCarousel = memo(function TrendingCarousel({
   markets,
   activeIndex,
   onSelect,
@@ -468,13 +481,57 @@ function TrendingCarousel({
       </div>
     </section>
   );
-}
+});
+
+// Isolated so hover state never re-renders the parent grid
+const VenueFilterPills = memo(function VenueFilterPills({
+  active,
+  onChange,
+}: {
+  active: VenueFilter;
+  onChange: (v: VenueFilter) => void;
+}) {
+  const [hoverActive, setHoverActive] = useState<VenueFilter>(active);
+  return (
+    <div className="nav-depth-wrap flex gap-1 w-fit rounded-xl p-1">
+      {(["all", "polymarket", "kalshi"] as const).map((v, idx) => (
+        <motion.button
+          initial={{ opacity: 0, y: -5 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 + idx * 0.05, duration: 0.3 }}
+          onMouseEnter={() => setHoverActive(v)}
+          onMouseLeave={() => setHoverActive(active)}
+          onClick={() => onChange(v)}
+          key={v}
+          className="nav-depth-pill relative w-22.5 text-[11px] font-bold uppercase tracking-wider"
+        >
+          {hoverActive === v && hoverActive !== active && (
+            <motion.div
+              layoutId="venue-hover"
+              className="absolute inset-0 rounded-[10px] bg-surface-hover/60 border border-border/40"
+              transition={{ type: "spring", stiffness: 500, damping: 35 }}
+            />
+          )}
+          {active === v && (
+            <motion.div
+              layoutId="venue-active"
+              className="absolute inset-0 rounded-[10px] nav-depth-pill-active"
+              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+            />
+          )}
+          <span className="relative z-10">{v === "all" ? "All" : v}</span>
+        </motion.button>
+      ))}
+    </div>
+  );
+});
 
 function ExploreContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const search = searchParams?.get("q") || "";
-  const venue = (searchParams?.get("venue") as VenueFilter) || "all";
+
+  // Venue filter is local state — no URL navigation, no scroll jump
+  const [venue, setVenue] = useState<VenueFilter>("all");
 
   const [data, setData] = useState<MarketsResponse | null>(null);
   const [trendingData, setTrendingData] = useState<ExploreMarket[] | null>(null);
@@ -483,10 +540,6 @@ function ExploreContent() {
   const [sort, setSort] = useState<SortOption>("volume");
   const [offset, setOffset] = useState(0);
   const [trendingIndex, setTrendingIndex] = useState(0);
-
-  // Animated filter pill states
-  const [hoverActive, setHoverActive] = useState<VenueFilter>(venue);
-  const [clickActive, setClickActive] = useState<VenueFilter>(venue);
   const limit = 180;
 
   // --- Live chart WebSocket ---
@@ -508,11 +561,8 @@ function ExploreContent() {
   const hasMoreMarkets = (data?.markets.length ?? 0) < (data?.total ?? 0);
 
   const handleVenue = (nextVenue: VenueFilter) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (nextVenue === "all") params.delete("venue");
-    else params.set("venue", nextVenue);
-    params.set("offset", "0");
-    router.push(`/?${params.toString()}`);
+    setVenue(nextVenue);
+    setOffset(0);
   };
 
   const fetchMarkets = useCallback(async () => {
@@ -559,7 +609,7 @@ function ExploreContent() {
 
   useEffect(() => {
     setTrendingIndex(0);
-  }, [trendingMarkets.length, search, sort, venue, offset]);
+  }, [trendingMarkets.length]); // only reset when trending list itself changes, not on venue/sort/offset
 
   useEffect(() => {
     if (trendingMarkets.length < 2) return;
@@ -638,34 +688,25 @@ function ExploreContent() {
   // Sync ref → state every 500ms for smooth chart redraws
   useEffect(() => {
     if (!activeMarketId) return;
+    const id = activeMarketId;
     const timer = setInterval(() => {
-      setLiveHistory({ ...liveHistoryRef.current });
+      const next = liveHistoryRef.current[id];
+      if (next) setLiveHistory(prev => ({ ...prev, [id]: next }));
     }, 500);
     return () => clearInterval(timer);
   }, [activeMarketId]);
 
   return (
     <main className="page-shell min-h-screen">
-      {data && (
+      {/* Trending carousel — always uses unfiltered data, independent of venue filter */}
+      {trendingMarkets.length > 0 && (
         <div id="trending" className="scroll-mt-40">
-          {trendingMarkets.length > 0 ? (
-            <TrendingCarousel
-              markets={trendingMarkets}
-              activeIndex={Math.min(trendingIndex, trendingMarkets.length - 1)}
-              onSelect={setTrendingIndex}
-              liveHistory={liveHistory}
-            />
-          ) : (
-            <section className="mb-14">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="section-title">{SECTION_LABEL.trending}</h3>
-                <span className="section-meta">0 markets</span>
-              </div>
-              <div className="depth-card rounded-xl p-4 text-sm text-text-muted">
-                No trending markets in the current filter.
-              </div>
-            </section>
-          )}
+          <TrendingCarousel
+            markets={trendingMarkets}
+            activeIndex={Math.min(trendingIndex, trendingMarkets.length - 1)}
+            onSelect={setTrendingIndex}
+            liveHistory={liveHistory}
+          />
         </div>
       )}
 
@@ -684,46 +725,7 @@ function ExploreContent() {
 
       {/* Filters */}
       <div className="controls-row">
-        <div className="nav-depth-wrap flex gap-1 w-fit rounded-xl p-1">
-          {(["all", "polymarket", "kalshi"] as const).map((v, idx) => (
-            <motion.button
-              initial={{ opacity: 0, y: -5 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + idx * 0.05, duration: 0.3 }}
-              onMouseEnter={() => setHoverActive(v)}
-              onMouseLeave={() => setHoverActive(clickActive)}
-              onClick={() => { setClickActive(v); handleVenue(v); }}
-              key={v}
-              className="nav-depth-pill relative w-22.5 text-[11px] font-bold uppercase tracking-wider"
-            >
-              {hoverActive === v && hoverActive != clickActive && (
-                <motion.div
-                  layoutId="venue-hover"
-                  className="absolute inset-0 rounded-[10px] bg-surface-hover/60 border border-border/40"
-                  transition={{
-                    type: "spring",
-                    stiffness: 500,
-                    damping: 35,
-                  }}
-                />
-              )}
-              {clickActive === v && (
-                <motion.div
-                  layoutId="venue-active"
-                  className="absolute inset-0 rounded-[10px] nav-depth-pill-active"
-                  style={{ inset: 0 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 500,
-                    damping: 30,
-                  }}
-                />
-              )}
-              <span className="relative z-10">{v === "all" ? "All" : v}</span>
-            </motion.button>
-          ))}
-        </div>
-
+        <VenueFilterPills active={venue} onChange={handleVenue} />
         <SortDropdown<SortOption>
           value={sort}
           onChange={setSort}
