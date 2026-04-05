@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Inter } from "next/font/google";
 import { Header } from "../components/layout/Header";
 import "./globals.css";
@@ -25,7 +26,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${inter.className}`}>
       <body className="antialiased">
-        <Header />
+        <Suspense>
+          <Header />
+        </Suspense>
         {children}
       </body>
     </html>
