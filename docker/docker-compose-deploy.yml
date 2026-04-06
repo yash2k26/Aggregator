@@ -7,12 +7,6 @@ services:
       - PORT=3001
       - CORS_ORIGIN=https://predictpro.yashb.xyz
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
 
   web:
     image: ghcr.io/yash2k26/predictpro/web:latest
@@ -22,9 +16,3 @@ services:
       server:
         condition: service_healthy
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
