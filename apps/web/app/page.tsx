@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback, useMemo, useRef, Suspense, memo } fro
 import Link from "next/link";
 
 import { useSearchParams } from "next/navigation";
+
 import type { ExploreMarket, MarketsResponse, ServerMessage } from "@repo/shared-types";
 import { useWebSocket } from "../hooks/useWebSocket";
 import { SECTION_LABEL } from "../lib/market-sections";
