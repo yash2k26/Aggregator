@@ -1,8 +1,10 @@
 "use client";
+
 /* eslint-disable @next/next/no-img-element */
 
 import { useState, useEffect, useCallback, useMemo, useRef, Suspense, memo } from "react";
 import Link from "next/link";
+
 import { useSearchParams } from "next/navigation";
 import type { ExploreMarket, MarketsResponse, ServerMessage } from "@repo/shared-types";
 import { useWebSocket } from "../hooks/useWebSocket";
@@ -92,13 +94,12 @@ function OutcomeButton({
   const isRose = color === "rose";
 
   return (
-    <div className={`flex flex-col justify-between flex-1 p-3.5 rounded-xl border transition-all duration-200 group/btn min-h-[76px] ${
-      isEmerald 
-        ? "bg-emerald-500/5 border-emerald-500/10 hover:border-emerald-500/20" 
-        : isRose 
-          ? "bg-rose-500/5 border-rose-500/10 hover:border-rose-500/20" 
-          : "bg-surface-3 border-border hover:border-border/80"
-    }`}>
+    <div className={`flex flex-col justify-between flex-1 p-3.5 rounded-xl border transition-all duration-200 group/btn min-h-[76px] ${isEmerald
+      ? "bg-emerald-500/5 border-emerald-500/10 hover:border-emerald-500/20"
+      : isRose
+        ? "bg-rose-500/5 border-rose-500/10 hover:border-rose-500/20"
+        : "bg-surface-3 border-border hover:border-border/80"
+      }`}>
       <div className="flex items-start justify-between gap-2 mb-2">
         <span className="text-[11px] font-bold uppercase tracking-widest text-text-muted">{label}</span>
         <div className={`w-1.5 h-1.5 mt-1 rounded-full ${isEmerald ? "bg-emerald-500 shadow-[0_0_4px_var(--color-bid)]" : isRose ? "bg-rose-500 shadow-[0_0_4px_var(--color-ask)]" : "bg-text-muted"}`} />
@@ -107,9 +108,8 @@ function OutcomeButton({
         <span className={`text-[1.35rem] font-bold tabular-nums leading-none tracking-tight ${isEmerald ? "text-emerald-500" : isRose ? "text-rose-500" : "text-text-primary"}`}>
           {pctText}
         </span>
-        <div className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border ${
-          isEmerald ? "border-emerald-500/20 text-emerald-500 bg-emerald-500/10" : isRose ? "border-rose-500/20 text-rose-500 bg-rose-500/10" : "border-border text-text-muted bg-surface-2"
-        }`}>
+        <div className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border ${isEmerald ? "border-emerald-500/20 text-emerald-500 bg-emerald-500/10" : isRose ? "border-rose-500/20 text-rose-500 bg-rose-500/10" : "border-border text-text-muted bg-surface-2"
+          }`}>
           Trade
         </div>
       </div>
@@ -141,9 +141,8 @@ const MarketCard = memo(function MarketCard({ market }: { market: ExploreMarket 
             </span>
             <div className="flex gap-1.5">
               {market.venues.map((v) => (
-                <span key={v.venue} className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase border ${
-                  v.venue === 'polymarket' ? 'border-[#3B82F6]/20 text-[#3B82F6] bg-[#3B82F6]/5' : 'border-[#F59E0B]/20 text-[#F59E0B] bg-[#F59E0B]/5'
-                }`}>
+                <span key={v.venue} className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase border ${v.venue === 'polymarket' ? 'border-[#3B82F6]/20 text-[#3B82F6] bg-[#3B82F6]/5' : 'border-[#F59E0B]/20 text-[#F59E0B] bg-[#F59E0B]/5'
+                  }`}>
                   {v.venue === 'polymarket' ? 'Poly' : 'Kalshi'}
                 </span>
               ))}
@@ -498,9 +497,8 @@ const VenueFilterPills = memo(function VenueFilterPills({
         <button
           key={v}
           onClick={() => onChange(v)}
-          className={`relative z-10 w-22.5 h-8 flex items-center justify-center text-[11px] font-bold uppercase tracking-wider transition-colors duration-150 ${
-            active === v ? "text-text-primary" : "text-text-muted hover:text-text-secondary"
-          }`}
+          className={`relative z-10 w-22.5 h-8 flex items-center justify-center text-[11px] font-bold uppercase tracking-wider transition-colors duration-150 ${active === v ? "text-text-primary" : "text-text-muted hover:text-text-secondary"
+            }`}
         >
           {v === "all" ? "All" : v}
         </button>

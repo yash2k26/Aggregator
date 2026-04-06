@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+
 import { createServer } from "http";
 import { config } from "./config.ts";
 import { WsServer } from "./ws/server.ts";
@@ -16,6 +17,7 @@ async function main(): Promise<void> {
 
   app.get("/health", (_req, res) => {
     res.json({ status: "ok", uptime: process.uptime() });
+
   });
 
   // ─── Worker handles ───
