@@ -4,7 +4,7 @@ services:
       context: ..
       dockerfile: docker/backend/Dockerfile
     ports:
-      - "3001:3001"
+      - "1001:3001"
     restart: unless-stopped
 
   web:
@@ -12,7 +12,7 @@ services:
       context: ..
       dockerfile: docker/web/Dockerfile
     ports:
-      - "3000:3000"
+      - "1000:3000"
     depends_on:
       - server
     restart: unless-stopped
